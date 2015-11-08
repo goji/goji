@@ -33,7 +33,8 @@ contexts overriding values deeper in the stack. The concrete type
 
 	map[Variable]interface{}
 
-is used for this purpose.
+is used for this purpose. If no variables are bound, nil should be returned
+instead of an empty map.
 */
 var AllVariables = allVariables{}
 

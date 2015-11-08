@@ -41,6 +41,24 @@ func TestStorage(t *testing.T) {
 	}
 }
 
+func TestEmptyStorage(t *testing.T) {
+	t.Parallel()
+
+	// This is a regression test for an illegal optimization we previously
+	// made in Storage.Bind, where binding to an empty storage object
+	// returned the input context verbatim. If the Path of the new Storage
+	// was different than the previous Path, the Path of the returned
+	// context would be incorrect.
+	ctx := new(Storage).Bind(SetPath(context.Background(), "/path"))
+	if path := Path(ctx); path != "" {
+		t.Errorf("path=%q, expected %q", path, "")
+	}
+
+	if all := ctx.Value(AllVariables); all != nil {
+		t.Errorf("all=%v, expected %v", all, nil)
+	}
+}
+
 func TestStorageOverflow(t *testing.T) {
 	t.Parallel()
 

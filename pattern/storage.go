@@ -53,10 +53,6 @@ The context.Context returned by this function is safe for concurrent use by
 multiple goroutines.
 */
 func (s *Storage) Bind(ctx context.Context) context.Context {
-	if s.shadow.length == 0 {
-		return ctx
-	}
-
 	ns := new(shadow)
 	*ns = s.shadow
 	ns.Context = ctx
@@ -85,6 +81,9 @@ func (s shadow) Value(key interface{}) interface{} {
 	case AllVariables:
 		var vs map[Variable]interface{}
 		if vsi := s.Context.Value(key); vsi == nil {
+			if s.length == 0 {
+				return nil
+			}
 			vs = make(map[Variable]interface{})
 		} else {
 			vs = vsi.(map[Variable]interface{})
