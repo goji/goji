@@ -52,6 +52,8 @@ type Pattern interface {
 	// derived from the input Context (or perhaps the input Context
 	// unchanged). The returned context may be used to store request-scoped
 	// data, such as variables extracted from the URL.
+	//
+	// Match must not mutate the passed request.
 	Match(context.Context, *http.Request) context.Context
 }
 
