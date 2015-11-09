@@ -20,6 +20,7 @@ Muxes cannot be configured concurrently from multiple goroutines, nor can they
 be configured concurrently with requests.
 */
 type Mux struct {
+	h Handler
 }
 
 /*
