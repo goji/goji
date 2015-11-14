@@ -13,6 +13,7 @@ type ContextWrapper struct {
 	http.Handler
 }
 
+// ServeHTTPC implements goji.Handler.
 func (c ContextWrapper) ServeHTTPC(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	c.Handler.ServeHTTP(w, r)
 }

@@ -89,6 +89,11 @@ import (
 	"golang.org/x/net/context"
 )
 
+/*
+Pattern implements goji.Pattern using a path-matching domain specific language.
+See the package documentation for more information about the semantics of this
+object.
+*/
 type Pattern struct {
 	raw string
 	// These are parallel arrays of each pattern string (sans ":"), the
@@ -217,16 +222,16 @@ func (p *Pattern) Match(ctx context.Context, r *http.Request) context.Context {
 
 	var storage pattern.Storage
 	for i, pat := range p.pats {
-		if unescaped, err := unescape(scratch[i]); err != nil {
+		unescaped, err := unescape(scratch[i])
+		if err != nil {
 			// If we encounter an encoding error here, there's
 			// really not much we can do about it with our current
 			// API, and I'm not really interested in supporting
 			// clients that misencode URLs anyways.
 			cleanup()
 			return nil
-		} else {
-			storage.Set(pat, unescaped)
 		}
+		storage.Set(pat, unescaped)
 	}
 	if p.wildcard {
 		storage.SetPath(scratch[len(p.pats)])
