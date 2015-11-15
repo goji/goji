@@ -65,11 +65,10 @@ use by multiple goroutines. It is not safe to concurrently register middleware
 from multiple goroutines.
 */
 func (m *Mux) Use(middleware func(http.Handler) http.Handler) {
-	if bridge, ok := m.h.(*handlerBridge); ok {
-		bridge.hs = append(bridge.hs, middleware)
-	} else {
-		m.h = &handlerBridge{m.h, []func(http.Handler) http.Handler{middleware}}
-	}
+	m.middleware = append(m.middleware, func(h Handler) Handler {
+		return outerBridge{middleware, h}
+	})
+	m.buildChain()
 }
 
 /*
@@ -81,23 +80,34 @@ multiple goroutines. It is not safe to concurrently register middleware from
 multiple goroutines.
 */
 func (m *Mux) UseC(middleware func(Handler) Handler) {
-	m.h = middleware(m.h)
+	m.middleware = append(m.middleware, middleware)
+	m.buildChain()
 }
 
-// handlerBridge allows us to up-convert http middleware to goji middleware.
-type handlerBridge struct {
-	h  Handler
-	hs []func(http.Handler) http.Handler
-}
-
-func (b *handlerBridge) ServeHTTPC(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	var h http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		b.h.ServeHTTPC(ctx, w, r)
-	})
-	for i := 0; i < len(b.hs); i++ {
-		h = b.hs[len(b.hs)-i-1](h)
+// Pre-compile a Handler for us to use during dispatch. Yes, this means that
+// adding middleware is quadratic, but it (a) happens during configuration time,
+// not at "runtime", and (b) n should ~always be small.
+func (m *Mux) buildChain() {
+	m.handler = dispatch{}
+	for i := len(m.middleware) - 1; i >= 0; i-- {
+		m.handler = m.middleware[i](m.handler)
 	}
-	h.ServeHTTP(w, r)
 }
 
-var _ Handler = &handlerBridge{}
+type innerBridge struct {
+	inner Handler
+	ctx   context.Context
+}
+
+func (b innerBridge) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	b.inner.ServeHTTPC(b.ctx, w, r)
+}
+
+type outerBridge struct {
+	mware func(http.Handler) http.Handler
+	inner Handler
+}
+
+func (b outerBridge) ServeHTTPC(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	b.mware(innerBridge{b.inner, ctx}).ServeHTTP(w, r)
+}

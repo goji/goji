@@ -1,6 +1,15 @@
 package goji
 
-import "net/http"
+import (
+	"net/http"
+
+	"goji.io/internal"
+)
+
+type route struct {
+	Pattern
+	Handler
+}
 
 /*
 Handle adds a new route to the Mux. Requests that match the given Pattern will
@@ -25,6 +34,11 @@ algorithm:
 It is not safe to concurrently register routes from multiple goroutines.
 */
 func (m *Mux) Handle(p Pattern, h http.Handler) {
+	gh, ok := h.(Handler)
+	if !ok {
+		gh = internal.ContextWrapper{Handler: h}
+	}
+	m.routes = append(m.routes, route{p, gh})
 }
 
 /*
@@ -34,4 +48,5 @@ Handle for more information about the semantics of routing.
 It is not safe to concurrently register routes from multiple goroutines.
 */
 func (m *Mux) HandleC(p Pattern, h Handler) {
+	m.routes = append(m.routes, route{p, h})
 }

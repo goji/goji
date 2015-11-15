@@ -20,7 +20,9 @@ Muxes cannot be configured concurrently from multiple goroutines, nor can they
 be configured concurrently with requests.
 */
 type Mux struct {
-	h Handler
+	handler    Handler
+	middleware []func(Handler) Handler
+	routes     []route
 }
 
 /*
@@ -33,7 +35,9 @@ Muxes: one to manage the URL hierarchy for users, one to manage albums, and a
 third top-level Mux to select between the other two.
 */
 func NewMux() *Mux {
-	return &Mux{}
+	m := &Mux{}
+	m.buildChain()
+	return m
 }
 
 /*
@@ -53,6 +57,8 @@ func (m *Mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 ServeHTTPC implements Handler.
 */
 func (m *Mux) ServeHTTPC(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	ctx = m.router(ctx, r)
+	m.handler.ServeHTTPC(ctx, w, r)
 }
 
 var _ http.Handler = &Mux{}
