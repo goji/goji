@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"goji.io/pattern"
-
 	"golang.org/x/net/context"
 )
 

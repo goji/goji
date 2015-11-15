@@ -5,9 +5,7 @@ import (
 	"testing"
 
 	"goji.io"
-
 	"goji.io/internal"
-
 	"golang.org/x/net/context"
 )
 
