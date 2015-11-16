@@ -6,11 +6,6 @@ import (
 	"goji.io/internal"
 )
 
-type route struct {
-	Pattern
-	Handler
-}
-
 /*
 Handle adds a new route to the Mux. Requests that match the given Pattern will
 be dispatched to the given http.Handler. If the http.Handler also supports
@@ -38,7 +33,7 @@ func (m *Mux) Handle(p Pattern, h http.Handler) {
 	if !ok {
 		gh = internal.ContextWrapper{Handler: h}
 	}
-	m.routes = append(m.routes, route{p, gh})
+	m.router.add(p, gh)
 }
 
 /*
@@ -48,5 +43,5 @@ Handle for more information about the semantics of routing.
 It is not safe to concurrently register routes from multiple goroutines.
 */
 func (m *Mux) HandleC(p Pattern, h Handler) {
-	m.routes = append(m.routes, route{p, h})
+	m.router.add(p, h)
 }

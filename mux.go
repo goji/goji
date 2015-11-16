@@ -3,6 +3,8 @@ package goji
 import (
 	"net/http"
 
+	"goji.io/internal"
+
 	"golang.org/x/net/context"
 )
 
@@ -22,7 +24,7 @@ be configured concurrently with requests.
 type Mux struct {
 	handler    Handler
 	middleware []func(Handler) Handler
-	routes     []route
+	router     router
 }
 
 /*
@@ -57,7 +59,10 @@ func (m *Mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 ServeHTTPC implements Handler.
 */
 func (m *Mux) ServeHTTPC(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	ctx = m.router(ctx, r)
+	if ctx.Value(internal.Path) == nil {
+		ctx = context.WithValue(ctx, internal.Path, r.URL.EscapedPath())
+	}
+	ctx = m.router.route(ctx, r)
 	m.handler.ServeHTTPC(ctx, w, r)
 }
 
