@@ -1,3 +1,5 @@
+// +build goji_router_simple
+
 package goji
 
 import (
