@@ -85,7 +85,6 @@ import (
 	"regexp"
 	"sort"
 	"strings"
-	"sync"
 
 	"goji.io/pattern"
 	"golang.org/x/net/context"
@@ -122,8 +121,6 @@ type Pattern struct {
 	breaks   []byte
 	literals []string
 	wildcard bool
-	// This is used to store scratch space for the Match function.
-	pool sync.Pool
 }
 
 // "Break characters" are characters that can end patterns. They are not allowed
@@ -170,10 +167,6 @@ func New(pat string) *Pattern {
 
 	sort.Sort(p.pats)
 
-	p.pool.New = func() interface{} {
-		return make([]string, 0, numMatches)
-	}
-
 	return p
 }
 
@@ -184,28 +177,17 @@ the request matches the request.
 This function satisfies goji.Pattern.
 */
 func (p *Pattern) Match(ctx context.Context, r *http.Request) context.Context {
-	// In order to avoid doing a second pass over the path, there is a
-	// period of time where we need scratch space to store matches we have
-	// accumulated so far, but where we don't know that the path matches
-	// completely (and therefore before we are forced to commit resources to
-	// store the match). This of course isn't necessary, but gives us a
-	// substantial bump in benchmarks, so we may as well.
-	v := p.pool.Get()
-	scratch := v.([]string)
-	// Ordinarily we'd defer this, but doing so appreciably adds to the
-	// runtime of this function in benchmarks.
-	cleanup := func() {
-		for i := range scratch {
-			scratch[i] = ""
-		}
-		p.pool.Put(v)
-	}
 	path := pattern.Path(ctx)
+	var scratch []string
+	if p.wildcard {
+		scratch = make([]string, len(p.pats)+1)
+	} else {
+		scratch = make([]string, len(p.pats))
+	}
 
 	for i := range p.pats {
 		sli := p.literals[i]
 		if !strings.HasPrefix(path, sli) {
-			cleanup()
 			return nil
 		}
 		path = path[len(sli):]
@@ -220,10 +202,9 @@ func (p *Pattern) Match(ctx context.Context, r *http.Request) context.Context {
 		if m == 0 {
 			// Empty strings are not matches, otherwise routes like
 			// "/:foo" would match the path "/"
-			cleanup()
 			return nil
 		}
-		scratch = append(scratch, path[:m])
+		scratch[i] = path[:m]
 		path = path[m:]
 	}
 
@@ -231,12 +212,10 @@ func (p *Pattern) Match(ctx context.Context, r *http.Request) context.Context {
 	tail := p.literals[len(p.pats)]
 	if p.wildcard {
 		if !strings.HasPrefix(path, tail) {
-			cleanup()
 			return nil
 		}
-		scratch = append(scratch, path[len(tail)-1:])
+		scratch[len(p.pats)] = path[len(tail)-1:]
 	} else if path != tail {
-		cleanup()
 		return nil
 	}
 
@@ -248,12 +227,10 @@ func (p *Pattern) Match(ctx context.Context, r *http.Request) context.Context {
 			// really not much we can do about it with our current
 			// API, and I'm not really interested in supporting
 			// clients that misencode URLs anyways.
-			cleanup()
 			return nil
 		}
 	}
 
-	// No cleanup() since we're stealing scratch for the match object
 	return match{ctx, p, scratch}
 }
 
