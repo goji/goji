@@ -50,7 +50,8 @@ can contain any number of named matches.
 Named matches set URL variables by comparing pattern names to the segments they
 matched. In our "/user/:name" example, a request for "/user/carl" would bind the
 "name" variable to the value "carl". Use the Param function to extract these
-variables from the request context.
+variables from the request context. Variable names in a single pattern must be
+unique.
 
 Matches are ordinarily delimited by slashes ("/"), but several other characters
 are accepted as delimiters (with slightly different semantics): the period
@@ -82,12 +83,28 @@ package pat
 import (
 	"net/http"
 	"regexp"
+	"sort"
 	"strings"
 	"sync"
 
 	"goji.io/pattern"
 	"golang.org/x/net/context"
 )
+
+type patNames []struct {
+	name pattern.Variable
+	idx  int
+}
+
+func (p patNames) Len() int {
+	return len(p)
+}
+func (p patNames) Less(i, j int) bool {
+	return p[i].name < p[j].name
+}
+func (p patNames) Swap(i, j int) {
+	p[i], p[j] = p[j], p[i]
+}
 
 /*
 Pattern implements goji.Pattern using a path-matching domain specific language.
@@ -101,7 +118,7 @@ type Pattern struct {
 	// and the string literals in between every pattern. There is always one
 	// more literal than pattern, and they are interleaved like this:
 	// <literal> <pattern> <break> <literal> <pattern> <break> <literal> etc...
-	pats     []string
+	pats     patNames
 	breaks   []byte
 	literals []string
 	wildcard bool
@@ -132,7 +149,7 @@ func New(pat string) *Pattern {
 
 	matches := patternRe.FindAllStringSubmatchIndex(pat, -1)
 	numMatches := len(matches)
-	p.pats = make([]string, numMatches)
+	p.pats = make(patNames, numMatches)
 	p.breaks = make([]byte, numMatches)
 	p.literals = make([]string, numMatches+1)
 
@@ -140,7 +157,8 @@ func New(pat string) *Pattern {
 	for i, match := range matches {
 		a, b := match[2], match[3]
 		p.literals[i] = pat[n : a-1] // Need to leave off the colon
-		p.pats[i] = pat[a:b]
+		p.pats[i].name = pattern.Variable(pat[a:b])
+		p.pats[i].idx = i
 		if b == len(pat) {
 			p.breaks[i] = '/'
 		} else {
@@ -149,6 +167,8 @@ func New(pat string) *Pattern {
 		n = b
 	}
 	p.literals[numMatches] = pat[n:]
+
+	sort.Sort(p.pats)
 
 	p.pool.New = func() interface{} {
 		return make([]string, 0, numMatches)
@@ -220,9 +240,9 @@ func (p *Pattern) Match(ctx context.Context, r *http.Request) context.Context {
 		return nil
 	}
 
-	var storage pattern.Storage
-	for i, pat := range p.pats {
-		unescaped, err := unescape(scratch[i])
+	for i := range p.pats {
+		var err error
+		scratch[i], err = unescape(scratch[i])
 		if err != nil {
 			// If we encounter an encoding error here, there's
 			// really not much we can do about it with our current
@@ -231,14 +251,10 @@ func (p *Pattern) Match(ctx context.Context, r *http.Request) context.Context {
 			cleanup()
 			return nil
 		}
-		storage.Set(pat, unescaped)
-	}
-	if p.wildcard {
-		storage.SetPath(scratch[len(p.pats)])
 	}
 
-	cleanup()
-	return storage.Bind(ctx)
+	// No cleanup() since we're stealing scratch for the match object
+	return match{ctx, p, scratch}
 }
 
 /*
