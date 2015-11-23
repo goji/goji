@@ -231,7 +231,7 @@ func (p *Pattern) Match(ctx context.Context, r *http.Request) context.Context {
 		}
 	}
 
-	return match{ctx, p, scratch}
+	return &match{ctx, p, scratch}
 }
 
 /*

@@ -26,8 +26,8 @@ func (rt *router) add(p Pattern, h Handler) {
 func (rt *router) route(ctx context.Context, r *http.Request) context.Context {
 	for _, route := range *rt {
 		if ctx := route.Match(ctx, r); ctx != nil {
-			return match{ctx, route.Pattern, route.Handler}
+			return &match{ctx, route.Pattern, route.Handler}
 		}
 	}
-	return match{Context: ctx}
+	return &match{Context: ctx}
 }
