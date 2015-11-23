@@ -3,6 +3,8 @@ package goji
 import (
 	"net/http"
 
+	"golang.org/x/net/context"
+
 	"goji.io/internal"
 )
 
@@ -37,11 +39,28 @@ func (m *Mux) Handle(p Pattern, h http.Handler) {
 }
 
 /*
-HandleC adds a context-aware handler to the Mux. See the documentation for
+HandleFunc adds a new route to the Mux. It is equivalent to calling Handle on a
+handler wrapped with http.HandlerFunc, and is provided only for convenience.
+*/
+func (m *Mux) HandleFunc(p Pattern, h func(http.ResponseWriter, *http.Request)) {
+	m.Handle(p, http.HandlerFunc(h))
+}
+
+/*
+HandleC adds a new context-aware route to the Mux. See the documentation for
 Handle for more information about the semantics of routing.
 
 It is not safe to concurrently register routes from multiple goroutines.
 */
 func (m *Mux) HandleC(p Pattern, h Handler) {
 	m.router.add(p, h)
+}
+
+/*
+HandleFuncC adds a new context-aware route to the Mux. It is equivalent to
+calling HandleC on a handler wrapped with HandlerFunc, and is provided for
+convenience.
+*/
+func (m *Mux) HandleFuncC(p Pattern, h func(context.Context, http.ResponseWriter, *http.Request)) {
+	m.HandleC(p, HandlerFunc(h))
 }

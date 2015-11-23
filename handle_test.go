@@ -24,6 +24,23 @@ func TestHandle(t *testing.T) {
 	}
 }
 
+func TestHandleFunc(t *testing.T) {
+	t.Parallel()
+
+	m := NewMux()
+	called := false
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		called = true
+	}
+	m.HandleFunc(boolPattern(true), fn)
+
+	w, r := wr()
+	m.ServeHTTPC(context.Background(), w, r)
+	if !called {
+		t.Error("expected handler to be called")
+	}
+}
+
 func TestHandleC(t *testing.T) {
 	t.Parallel()
 
@@ -33,6 +50,23 @@ func TestHandleC(t *testing.T) {
 		called = true
 	}
 	m.HandleC(boolPattern(true), HandlerFunc(fn))
+
+	w, r := wr()
+	m.ServeHTTPC(context.Background(), w, r)
+	if !called {
+		t.Error("expected handler to be called")
+	}
+}
+
+func TestHandleFuncC(t *testing.T) {
+	t.Parallel()
+
+	m := NewMux()
+	called := false
+	fn := func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+		called = true
+	}
+	m.HandleFuncC(boolPattern(true), fn)
 
 	w, r := wr()
 	m.ServeHTTPC(context.Background(), w, r)
