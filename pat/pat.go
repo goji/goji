@@ -181,7 +181,7 @@ func (p *Pattern) Match(ctx context.Context, r *http.Request) context.Context {
 	var scratch []string
 	if p.wildcard {
 		scratch = make([]string, len(p.pats)+1)
-	} else {
+	} else if len(p.pats) > 0 {
 		scratch = make([]string, len(p.pats))
 	}
 
