@@ -5,7 +5,6 @@ package goji
 import (
 	"net/http"
 
-	"goji.io/internal"
 	"golang.org/x/net/context"
 )
 
@@ -27,10 +26,8 @@ func (rt *router) add(p Pattern, h Handler) {
 func (rt *router) route(ctx context.Context, r *http.Request) context.Context {
 	for _, route := range *rt {
 		if ctx := route.Match(ctx, r); ctx != nil {
-			ctx = context.WithValue(ctx, internal.Pattern, route.Pattern)
-			ctx = context.WithValue(ctx, internal.Handler, route.Handler)
-			return ctx
+			return match{ctx, route.Pattern, route.Handler}
 		}
 	}
-	return ctx
+	return match{Context: ctx}
 }

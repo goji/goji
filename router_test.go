@@ -17,7 +17,12 @@ func TestNoMatch(t *testing.T) {
 		t.Fatal("did not expect handler to be called")
 	}))
 	_, r := wr()
-	ctx := context.WithValue(context.Background(), internal.Path, "/")
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, internal.Pattern, boolPattern(true))
+	ctx = context.WithValue(ctx, internal.Pattern, boolPattern(true))
+	ctx = context.WithValue(ctx, "answer", 42)
+
+	ctx = context.WithValue(ctx, internal.Path, "/")
 	ctx = rt.route(ctx, r)
 
 	if p := ctx.Value(internal.Pattern); p != nil {
@@ -25,6 +30,9 @@ func TestNoMatch(t *testing.T) {
 	}
 	if h := ctx.Value(internal.Handler); h != nil {
 		t.Errorf("unexpected handler %v", h)
+	}
+	if h := ctx.Value("answer"); h != 42 {
+		t.Errorf("context didn't work: got %v, wanted %v", h, 42)
 	}
 }
 

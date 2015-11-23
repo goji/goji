@@ -90,12 +90,10 @@ func (rt *router) route(ctx context.Context, r *http.Request) context.Context {
 	sort.Ints(routes)
 	for _, i := range routes {
 		if ctx := rt.routes[i].Match(ctx, r); ctx != nil {
-			ctx = context.WithValue(ctx, internal.Pattern, rt.routes[i].Pattern)
-			ctx = context.WithValue(ctx, internal.Handler, rt.routes[i].Handler)
-			return ctx
+			return match{ctx, rt.routes[i].Pattern, rt.routes[i].Handler}
 		}
 	}
-	return ctx
+	return match{Context: ctx}
 }
 
 // We can be a teensy bit more efficient here: we're maintaining a sorted list,
