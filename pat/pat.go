@@ -111,7 +111,8 @@ See the package documentation for more information about the semantics of this
 object.
 */
 type Pattern struct {
-	raw string
+	raw     string
+	methods map[string]struct{}
 	// These are parallel arrays of each pattern string (sans ":"), the
 	// breaks each expect afterwords (used to support e.g., "." dividers),
 	// and the string literals in between every pattern. There is always one
@@ -170,6 +171,18 @@ func New(pat string) *Pattern {
 	return p
 }
 
+func newWithMethods(pat string, methods ...string) *Pattern {
+	p := New(pat)
+
+	methodSet := make(map[string]struct{}, len(methods))
+	for _, method := range methods {
+		methodSet[method] = struct{}{}
+	}
+	p.methods = methodSet
+
+	return p
+}
+
 /*
 Match runs the Pat pattern on the given request, returning a non-nil context if
 the request matches the request.
@@ -177,6 +190,13 @@ the request matches the request.
 This function satisfies goji.Pattern.
 */
 func (p *Pattern) Match(ctx context.Context, r *http.Request) context.Context {
+	if p.methods != nil {
+		if _, ok := p.methods[r.Method]; !ok {
+			return nil
+		}
+	}
+
+	// Check Path
 	path := pattern.Path(ctx)
 	var scratch []string
 	if p.wildcard {
@@ -242,6 +262,17 @@ This function satisfies goji's PathPrefix Pattern optimization.
 */
 func (p *Pattern) PathPrefix() string {
 	return p.literals[0]
+}
+
+/*
+HTTPMethods returns a set of HTTP methods that all requests that this
+Pattern matches must be in, or nil if it's not possible to determine
+which HTTP methods might be matched.
+
+This function satisfies goji's HTTPMethods Pattern optimization.
+*/
+func (p *Pattern) HTTPMethods() map[string]struct{} {
+	return p.methods
 }
 
 /*
