@@ -154,6 +154,39 @@ func TestHTTPMethods(t *testing.T) {
 	}
 }
 
+var URLTests = []struct {
+	pat    string
+	vars   map[pattern.Variable]string
+	expect string
+}{
+	{"/", map[pattern.Variable]string{}, "/"},
+	{"/", map[pattern.Variable]string{"foo": "bar"}, "/"},
+	{"/:name.:ext", map[pattern.Variable]string{"name": "my", "ext": "tar.gz"}, "/my.tar.gz"},
+	{"/:name.:ext", map[pattern.Variable]string{"name": "my"}, ""},
+	{"/:name;:name.:name,:name", map[pattern.Variable]string{"name": "a"}, "/a;a.a,a"},
+	{"/:name/", map[pattern.Variable]string{"name": "my"}, "/my/"},
+}
+
+func TestPath(t *testing.T) {
+	t.Parallel()
+
+	for i, test := range URLTests {
+		pat := New(test.pat)
+		actual, err := pat.URL(test.vars)
+		if test.expect == "" {
+			if err == nil {
+				t.Errorf("%d: expected error, got %s", i, actual)
+			}
+		} else {
+			if err != nil {
+				t.Errorf("%d: unexpected error %s", i, err)
+			} else if actual.Path != test.expect {
+				t.Errorf("%d: %q.URL().Path = %q, expected %q", i, test.pat, actual.Path, test.expect)
+			}
+		}
+	}
+}
+
 func TestParam(t *testing.T) {
 	t.Parallel()
 
