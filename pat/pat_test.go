@@ -139,6 +139,21 @@ func TestPathPrefix(t *testing.T) {
 	}
 }
 
+func TestHTTPMethods(t *testing.T) {
+	t.Parallel()
+
+	pat := New("/foo")
+	if methods := pat.HTTPMethods(); methods != nil {
+		t.Errorf("expected nil with no methods, got %v", methods)
+	}
+
+	pat = Get("/boo")
+	expect := map[string]struct{}{"GET": {}, "HEAD": {}}
+	if methods := pat.HTTPMethods(); !reflect.DeepEqual(expect, methods) {
+		t.Errorf("methods=%v, expected %v", methods, expect)
+	}
+}
+
 func TestParam(t *testing.T) {
 	t.Parallel()
 

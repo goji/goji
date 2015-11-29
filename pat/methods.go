@@ -1,56 +1,51 @@
 package pat
 
-import (
-	"goji.io"
-	"goji.io/pattern"
-)
-
 /*
 Delete returns a Pat route that only matches the DELETE HTTP method.
 */
-func Delete(pat string) goji.Pattern {
-	return pattern.WithMethods(New(pat), "DELETE")
+func Delete(pat string) *Pattern {
+	return newWithMethods(pat, "DELETE")
 }
 
 /*
 Get returns a Pat route that only matches the GET and HEAD HTTP method. HEAD
 requests are handled transparently by net/http.
 */
-func Get(pat string) goji.Pattern {
-	return pattern.WithMethods(New(pat), "GET", "HEAD")
+func Get(pat string) *Pattern {
+	return newWithMethods(pat, "GET", "HEAD")
 }
 
 /*
 Head returns a Pat route that only matches the HEAD HTTP method.
 */
-func Head(pat string) goji.Pattern {
-	return pattern.WithMethods(New(pat), "HEAD")
+func Head(pat string) *Pattern {
+	return newWithMethods(pat, "HEAD")
 }
 
 /*
 Options returns a Pat route that only matches the OPTIONS HTTP method.
 */
-func Options(pat string) goji.Pattern {
-	return pattern.WithMethods(New(pat), "OPTIONS")
+func Options(pat string) *Pattern {
+	return newWithMethods(pat, "OPTIONS")
 }
 
 /*
 Patch returns a Pat route that only matches the PATCH HTTP method.
 */
-func Patch(pat string) goji.Pattern {
-	return pattern.WithMethods(New(pat), "PATCH")
+func Patch(pat string) *Pattern {
+	return newWithMethods(pat, "PATCH")
 }
 
 /*
 Post returns a Pat route that only matches the POST HTTP method.
 */
-func Post(pat string) goji.Pattern {
-	return pattern.WithMethods(New(pat), "POST")
+func Post(pat string) *Pattern {
+	return newWithMethods(pat, "POST")
 }
 
 /*
 Put returns a Pat route that only matches the PUT HTTP method.
 */
-func Put(pat string) goji.Pattern {
-	return pattern.WithMethods(New(pat), "PUT")
+func Put(pat string) *Pattern {
+	return newWithMethods(pat, "PUT")
 }
