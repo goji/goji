@@ -117,7 +117,7 @@ type Pattern struct {
 	// breaks each expect afterwords (used to support e.g., "." dividers),
 	// and the string literals in between every pattern. There is always one
 	// more literal than pattern, and they are interleaved like this:
-	// <literal> <pattern> <break> <literal> <pattern> <break> <literal> etc...
+	// <literal> <pattern> <literal> <pattern> <literal> etc...
 	pats     patNames
 	breaks   []byte
 	literals []string
