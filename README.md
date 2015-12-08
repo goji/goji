@@ -1,5 +1,6 @@
 Goji
 ====
+[![GoDoc](https://godoc.org/github.com/goji/goji?status.svg)](https://godoc.org/github.com/goji/goji/) [![Build Status](https://travis-ci.org/goji/goji.svg)](https://travis-ci.org/goji/goji)
 
 Goji is a HTTP request multiplexer, similar to [`net/http.ServeMux`][servemux].
 It compares incoming requests to a list of registered [Patterns][pattern], and
@@ -81,3 +82,8 @@ broader Go community's [Code of Conduct][conduct].
 
 [berries]: https://groups.google.com/forum/#!forum/gojiberries
 [conduct]: https://golang.org/conduct
+
+License
+-------
+
+Goji is released under the MIT license. See the LICENSE file for full details.

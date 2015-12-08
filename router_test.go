@@ -45,7 +45,7 @@ the entire set of routes Goji would attempt for every request, ensuring that the
 router is picking routes in the correct order.
 */
 
-var TestRoutes = []testPattern{
+var testRoutes = []testPattern{
 	testPattern{methods: nil, prefix: "/"},
 	testPattern{methods: nil, prefix: "/a"},
 	testPattern{methods: []string{"POST", "PUT"}, prefix: "/a"},
@@ -65,7 +65,7 @@ var TestRoutes = []testPattern{
 	testPattern{methods: []string{"PUT"}, prefix: "/"},
 }
 
-var RouterTests = []struct {
+var routerTests = []struct {
 	method, path string
 	results      []int
 }{
@@ -97,14 +97,14 @@ func TestRouter(t *testing.T) {
 
 	var rt router
 	mark := new(int)
-	for i, p := range TestRoutes {
+	for i, p := range testRoutes {
 		i := i
 		p.index = i
 		p.mark = mark
 		rt.add(p, intHandler(i))
 	}
 
-	for i, test := range RouterTests {
+	for i, test := range routerTests {
 		r, err := http.NewRequest(test.method, test.path, nil)
 		if err != nil {
 			panic(err)
@@ -112,7 +112,7 @@ func TestRouter(t *testing.T) {
 		ctx := context.WithValue(context.Background(), internal.Path, test.path)
 
 		var out []int
-		for *mark = 0; *mark < len(TestRoutes); *mark++ {
+		for *mark = 0; *mark < len(testRoutes); *mark++ {
 			ctx := rt.route(ctx, r)
 			if h := ctx.Value(internal.Handler); h != nil {
 				out = append(out, int(h.(intHandler)))
