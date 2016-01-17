@@ -25,18 +25,40 @@ type Mux struct {
 	handler    Handler
 	middleware []func(Handler) Handler
 	router     router
+	root       bool
 }
 
 /*
 NewMux returns a new Mux with no configured middleware or routes.
-
-A common pattern is to organize your application similarly to how you structure
-your URLs. For instance, a photo-sharing site might have URLs that start with
-"/users/" and URLs that start with "/albums/"; such a site might have three
-Muxes: one to manage the URL hierarchy for users, one to manage albums, and a
-third top-level Mux to select between the other two.
 */
 func NewMux() *Mux {
+	m := SubMux()
+	m.root = true
+	return m
+}
+
+/*
+SubMux returns a new Mux with no configured middleware or routes, and which
+inherits routing information from the passed context. This is especially useful
+when using one Mux as a Handler registered to another "parent" Mux.
+
+For example, a common pattern is to organize applications in a way that mirrors
+the structure of its URLs: a photo-sharing site might have URLs that start with
+"/users/" and URLs that start with "/albums/", and might be organized using
+three Muxes:
+
+	root := NewMux()
+	users := SubMux()
+	root.HandleC(pat.New("/users/*", users)
+	albums := SubMux()
+	root.HandleC(pat.New("/albums/*", albums)
+
+	// e.g., GET /users/carl
+	users.HandleC(pat.Get("/:name"), renderProfile)
+	// e.g., POST /albums/
+	albums.HandleC(pat.Post("/"), newAlbum)
+*/
+func SubMux() *Mux {
 	m := &Mux{}
 	m.buildChain()
 	return m
@@ -59,7 +81,7 @@ func (m *Mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 ServeHTTPC implements Handler.
 */
 func (m *Mux) ServeHTTPC(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	if ctx.Value(internal.Path) == nil {
+	if m.root {
 		ctx = context.WithValue(ctx, internal.Path, r.URL.EscapedPath())
 	}
 	ctx = m.router.route(ctx, r)
