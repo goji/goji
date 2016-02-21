@@ -16,32 +16,34 @@ import (
 )
 
 /*
-Pattern determines whether or not a given request matches some criteria. Goji
-users looking for a concrete type that implements this interface should consider
+Pattern determines whether a given request matches some criteria. Goji users
+looking for a concrete type that implements this interface should consider
 Goji's "pat" sub-package, which implements a small domain specific language for
 HTTP routing.
 
-Most patterns match on a relatively small portion of incoming requests, most
+Patterns typically only examine a small portion of incoming requests, most
 commonly the HTTP method and the URL's RawPath. As an optimization, Goji can
 elide calls to your Pattern for requests it knows cannot match. Pattern authors
 who wish to take advantage of this functionality (and in some cases an
 asymptotic performance improvement) can augment their Pattern implementations
-with methods with any of the following signatures:
+with any of the following methods:
 
-	// HTTPMethods returns a set of HTTP methods that all requests that this
-	// Pattern matches must be in, or nil if it's not possible to determine
-	// which HTTP methods might be matched.
+	// HTTPMethods returns a set of HTTP methods that this Pattern matches,
+	// or nil if it's not possible to determine which HTTP methods might be
+	// matched. Put another way, requests with HTTP methods not in the
+	// returned set are guaranteed to never match this Pattern.
 	HTTPMethods() map[string]struct{}
 
 	// PathPrefix returns a string which all RawPaths that match this
-	// Pattern must contain as a prefix.
+	// Pattern must have as a prefix. Put another way, requests with
+	// RawPaths that do not contain the returned string as a prefix are
+	// guaranteed to never match this Pattern.
 	PathPrefix() string
 
 The presence or lack of these performance improvements should be viewed as an
-implementation detail and are not part of Goji's API compatibility guarantee.
-It is the responsibility of Pattern authors to ensure that their Match function
-(which is part of the API compatibility guarantee) always returns correct
-results, even if optimizations are not performed.
+implementation detail and are not part of Goji's API compatibility guarantee. It
+is the responsibility of Pattern authors to ensure that their Match function
+always returns correct results, even if these optimizations are not performed.
 
 All operations on Patterns must be safe for concurrent use by multiple
 goroutines.
@@ -49,9 +51,9 @@ goroutines.
 type Pattern interface {
 	// Match examines the request and request context to determine if the
 	// request is a match. If so, it returns a non-nil context.Context
-	// derived from the input Context (or perhaps the input Context
-	// unchanged). The returned context may be used to store request-scoped
-	// data, such as variables extracted from the URL.
+	// (likely one derived from the input Context, and perhaps simply the
+	// input Context unchanged). The returned context may be used to store
+	// request-scoped data, such as variables extracted from the Request.
 	//
 	// Match must not mutate the passed request.
 	Match(context.Context, *http.Request) context.Context
@@ -68,8 +70,8 @@ type Handler interface {
 
 /*
 HandlerFunc is a context-aware variant of net/http.HandlerFunc. It has the same
-semantics as http.Handler, except that a request-scoped context is additionally
-passed to the function.
+semantics as http.HandlerFunc, except that a request-scoped context is
+additionally passed to the function.
 
 HandlerFunc implements both the Handler and http.Handler interfaces.
 */

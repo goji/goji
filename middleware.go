@@ -17,8 +17,8 @@ Middleware are evaluated in the reverse order in which they were added, but the
 resulting Handlers execute in "normal" order (i.e., the Handler returned by the
 first Middleware to be added gets called first).
 
-For instance, given middleware A, B, and C, added in that order, Goji's behavior
-will look something like this:
+For instance, given middleware A, B, and C, added in that order, Goji will
+behave similarly to this snippet:
 
 	augmentedHandler := A(B(C(yourHandler)))
 	augmentedHandler.ServeHTTPC(ctx, w, r)
@@ -58,11 +58,13 @@ called a single time.
 
 Middleware in Goji is called after routing has been performed. Therefore it is
 possible to examine any routing information placed into the context by Patterns,
-or to view or modify the Handler that will be routed to.
+or to view or modify the Handler that will be routed to. Middleware authors
+should read the documentation for the "middleware" subpackage for more
+information about how this is done.
 
 The http.Handler returned by the given middleware must be safe for concurrent
 use by multiple goroutines. It is not safe to concurrently register middleware
-from multiple goroutines.
+from multiple goroutines, or to register middleware concurrently with requests.
 */
 func (m *Mux) Use(middleware func(http.Handler) http.Handler) {
 	m.middleware = append(m.middleware, func(h Handler) Handler {
@@ -77,7 +79,7 @@ documentation for Use for more information about the semantics of middleware.
 
 The Handler returned by the given middleware must be safe for concurrent use by
 multiple goroutines. It is not safe to concurrently register middleware from
-multiple goroutines.
+multiple goroutines, or to register middleware concurrently with requests.
 */
 func (m *Mux) UseC(middleware func(Handler) Handler) {
 	m.middleware = append(m.middleware, middleware)

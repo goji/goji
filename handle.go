@@ -27,7 +27,8 @@ algorithm:
 		}
 	}
 
-It is not safe to concurrently register routes from multiple goroutines.
+It is not safe to concurrently register routes from multiple goroutines, or to
+register routes concurrently with requests.
 */
 func (m *Mux) Handle(p Pattern, h http.Handler) {
 	gh, ok := h.(Handler)
@@ -49,7 +50,8 @@ func (m *Mux) HandleFunc(p Pattern, h func(http.ResponseWriter, *http.Request)) 
 HandleC adds a new context-aware route to the Mux. See the documentation for
 Handle for more information about the semantics of routing.
 
-It is not safe to concurrently register routes from multiple goroutines.
+It is not safe to concurrently register routes from multiple goroutines, or to
+register routes concurrently with requests.
 */
 func (m *Mux) HandleC(p Pattern, h Handler) {
 	m.router.add(p, h)
