@@ -71,10 +71,9 @@ func (rt *router) route(ctx context.Context, r *http.Request) context.Context {
 	}
 
 	path := ctx.Value(internal.Path).(string)
-	for {
+	for path != "" {
 		i := sort.Search(len(tn.children), func(i int) bool {
-			p := tn.children[i].prefix
-			return path < p || strings.HasPrefix(path, p)
+			return path[0] <= tn.children[i].prefix[0]
 		})
 		if i == len(tn.children) || !strings.HasPrefix(path, tn.children[i].prefix) {
 			break
