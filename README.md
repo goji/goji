@@ -1,6 +1,8 @@
 Goji
 ====
 
+[![GoDoc](https://godoc.org/goji.io?status.svg)](https://godoc.org/goji.io) [![Build Status](https://travis-ci.org/goji/goji.svg?branch=master)](https://travis-ci.org/goji/goji)
+
 Goji is a HTTP request multiplexer, similar to [`net/http.ServeMux`][servemux].
 It compares incoming requests to a list of registered [Patterns][pattern], and
 dispatches to the [Handler][handler] that corresponds to the first matching
@@ -51,15 +53,9 @@ Please refer to [Goji's GoDoc Documentation][godoc] for a full API reference.
 Stability
 ---------
 
-As of this writing (late November 2015), this version of Goji is still very new,
-and during this initial experimental stage it offers no API stability
-guarantees. After the API has had a little time to bake, Goji expects to adhere
-strictly to the Go project's [compatibility guidelines][compat], guaranteeing to
-never break compatibility with existing code.
-
-We expect to be able to make such a guarantee by early 2016. Although we reserve
-the right to do so, there are no breaking API changes planned until that point,
-and we are unlikely to accept any such breaking changes.
+Goji's API is stable, and guarantees to never break compatibility with existing
+code (under similar rules to the Go project's [guidelines][compat]). Goji is
+suitable for use in production.
 
 [compat]: https://golang.org/doc/go1compat
 
