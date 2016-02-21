@@ -3,9 +3,8 @@ package goji
 import (
 	"net/http"
 
-	"golang.org/x/net/context"
-
 	"goji.io/internal"
+	"golang.org/x/net/context"
 )
 
 /*

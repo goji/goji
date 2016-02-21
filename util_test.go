@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"goji.io/internal"
-
 	"golang.org/x/net/context"
 )
 
