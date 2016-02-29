@@ -133,11 +133,13 @@ func (tn *trieNode) add(prefix string, idx int) {
 		return ch <= tn.children[i].prefix[0]
 	})
 
-	for ; i < len(tn.children); i++ {
-		if tn.children[i].prefix[0] > ch {
-			break
-		}
-
+	if i == len(tn.children) || ch != tn.children[i].prefix[0] {
+		routes := append([]int(nil), tn.routes...)
+		tn.children = append(tn.children, child{
+			prefix: prefix,
+			node:   &trieNode{routes: append(routes, idx)},
+		})
+	} else {
 		lp := longestPrefix(prefix, tn.children[i].prefix)
 
 		if tn.children[i].prefix == lp {
@@ -154,15 +156,8 @@ func (tn *trieNode) add(prefix string, idx int) {
 
 		tn.children[i].prefix = lp
 		tn.children[i].node = split
-		sort.Sort(byPrefix(tn.children))
-		return
 	}
 
-	routes := append([]int(nil), tn.routes...)
-	tn.children = append(tn.children, child{
-		prefix: prefix,
-		node:   &trieNode{routes: append(routes, idx)},
-	})
 	sort.Sort(byPrefix(tn.children))
 }
 
