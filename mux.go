@@ -48,9 +48,9 @@ three Muxes:
 
 	root := NewMux()
 	users := SubMux()
-	root.HandleC(pat.New("/users/*", users)
+	root.HandleC(pat.New("/users/*"), users)
 	albums := SubMux()
-	root.HandleC(pat.New("/albums/*", albums)
+	root.HandleC(pat.New("/albums/*"), albums)
 
 	// e.g., GET /users/carl
 	users.HandleC(pat.Get("/:name"), renderProfile)
