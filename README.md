@@ -57,6 +57,15 @@ Goji's API is stable, and guarantees to never break compatibility with existing
 code (under similar rules to the Go project's [guidelines][compat]). Goji is
 suitable for use in production.
 
+One possible exception to the above compatibility guarantees surrounds the
+inclusion of the `x/net/context` package in the standard library for Go 1.7.
+When this happens, Goji may switch its package imports to use the standard
+library's version of the package. Note that, while this is a backwards
+incompatible change, the impact on clients is expected to be minimal:
+applications will simply have to change the import path of the `context`
+package. More discussion about this migration can be found on the Goji mailing
+list.
+
 [compat]: https://golang.org/doc/go1compat
 
 
