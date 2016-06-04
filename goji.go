@@ -10,9 +10,8 @@ their own, especially if their needs are unusual.
 package goji
 
 import (
+	"context"
 	"net/http"
-
-	"golang.org/x/net/context"
 )
 
 /*

@@ -1,11 +1,10 @@
 package goji
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"golang.org/x/net/context"
 )
 
 func TestHandlerFunc(t *testing.T) {

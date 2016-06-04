@@ -1,12 +1,12 @@
 package pat
 
 import (
+	"context"
 	"net/http"
 	"reflect"
 	"testing"
 
 	"goji.io/pattern"
-	"golang.org/x/net/context"
 )
 
 func TestExistingContext(t *testing.T) {

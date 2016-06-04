@@ -17,7 +17,7 @@ algorithm:
 		// For performance, Patterns can opt out of this call to Match.
 		// See the documentation for Pattern for more.
 		if ctx2 := route.pattern.Match(ctx, r); ctx2 != nil {
-			route.handler.ServeHTTPC(ctx2, w, r)
+			route.handler.ServeHTTP(w, r.WithContext(ctx2))
 			break
 		}
 	}

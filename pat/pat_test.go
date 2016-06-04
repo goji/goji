@@ -1,12 +1,12 @@
 package pat
 
 import (
+	"context"
 	"net/http"
 	"reflect"
 	"testing"
 
 	"goji.io/pattern"
-	"golang.org/x/net/context"
 )
 
 func mustReq(method, path string) (context.Context, *http.Request) {
