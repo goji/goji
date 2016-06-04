@@ -58,7 +58,7 @@ func (t testPattern) HTTPMethods() map[string]struct{} {
 
 type intHandler int
 
-func (i intHandler) ServeHTTPC(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+func (i intHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func wr() (*httptest.ResponseRecorder, *http.Request) {

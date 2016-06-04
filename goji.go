@@ -58,37 +58,3 @@ type Pattern interface {
 	// Match must not mutate the passed request.
 	Match(context.Context, *http.Request) context.Context
 }
-
-/*
-Handler is a context-aware variant of net/http.Handler. It has the same
-semantics as http.Handler, except that a request-scoped context is additionally
-passed to the handler function.
-*/
-type Handler interface {
-	ServeHTTPC(context.Context, http.ResponseWriter, *http.Request)
-}
-
-/*
-HandlerFunc is a context-aware variant of net/http.HandlerFunc. It has the same
-semantics as http.HandlerFunc, except that a request-scoped context is
-additionally passed to the function.
-
-HandlerFunc implements both the Handler and http.Handler interfaces.
-*/
-type HandlerFunc func(context.Context, http.ResponseWriter, *http.Request)
-
-/*
-ServeHTTP implements net/http.Handler. It calls the underlying function with a
-context of context.TODO in order to ease the conversion of non-context-aware
-Handlers to context-aware ones using static analysis.
-*/
-func (h HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	h(context.TODO(), w, r)
-}
-
-/*
-ServeHTTPC implements Handler.
-*/
-func (h HandlerFunc) ServeHTTPC(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	h(ctx, w, r)
-}

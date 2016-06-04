@@ -1,10 +1,10 @@
 package goji
 
 import (
+	"context"
 	"net/http"
 
 	"goji.io/internal"
-	"golang.org/x/net/context"
 )
 
 /*
@@ -21,8 +21,8 @@ Muxes cannot be configured concurrently from multiple goroutines, nor can they
 be configured concurrently with requests.
 */
 type Mux struct {
-	handler    Handler
-	middleware []func(Handler) Handler
+	handler    http.Handler
+	middleware []func(http.Handler) http.Handler
 	router     router
 	root       bool
 }
@@ -64,28 +64,14 @@ func SubMux() *Mux {
 }
 
 /*
-ServeHTTP implements net/http.Handler. It uses context.TODO as the root context
-in order to ease the conversion of non-context-aware Handlers to context-aware
-ones using static analysis.
-
-Users who know that their mux sits at the top of the request hierarchy should
-consider creating a small helper http.Handler that calls this Mux's ServeHTTPC
-function with context.Background.
+ServeHTTP implements net/http.Handler. It uses context.Background as the root context.
 */
 func (m *Mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	m.ServeHTTPC(context.TODO(), w, r)
-}
-
-/*
-ServeHTTPC implements Handler.
-*/
-func (m *Mux) ServeHTTPC(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if m.root {
-		ctx = context.WithValue(ctx, internal.Path, r.URL.EscapedPath())
+		r = r.WithContext(context.WithValue(r.Context(), internal.Path, r.URL.EscapedPath()))
 	}
-	ctx = m.router.route(ctx, r)
-	m.handler.ServeHTTPC(ctx, w, r)
+	ctx := m.router.route(r.Context(), r)
+	m.handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
 var _ http.Handler = &Mux{}
-var _ Handler = &Mux{}

@@ -15,9 +15,9 @@ func TestHandlerFunc(t *testing.T) {
 
 	rw := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/", nil)
-	h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-		if ctx != context.TODO() {
-			t.Errorf("ctx: expected %v, got %v", context.TODO(), ctx)
+	h := func(w http.ResponseWriter, r *http.Request) {
+		if r.Context() != context.Background() {
+			t.Errorf("ctx: expected %v, got %v", context.Background(), r.Context())
 		}
 		if w != rw {
 			t.Errorf("rw: expected %v, got %v", rw, w)
@@ -28,7 +28,7 @@ func TestHandlerFunc(t *testing.T) {
 		called = true
 	}
 
-	HandlerFunc(h).ServeHTTP(rw, req)
+	http.HandlerFunc(h).ServeHTTP(rw, req)
 	if !called {
 		t.Error("expected handler to be called")
 	}
