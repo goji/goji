@@ -7,7 +7,7 @@ Goji is a HTTP request multiplexer, similar to [`net/http.ServeMux`][servemux].
 It compares incoming requests to a list of registered [Patterns][pattern], and
 dispatches to the [http.Handler][handler] that corresponds to the first matching
 Pattern. Goji also supports [Middleware][middleware] (composable shared
-functionality applied to every request) and uses the tandard
+functionality applied to every request) and uses the standard
 [`context`][context] to store request-scoped values.
 
 [servemux]: https://golang.org/pkg/net/http/#ServeMux

@@ -48,14 +48,14 @@ three Muxes:
 
 	root := NewMux()
 	users := SubMux()
-	root.HandleC(pat.New("/users/*"), users)
+	root.Handle(pat.New("/users/*", users)
 	albums := SubMux()
-	root.HandleC(pat.New("/albums/*"), albums)
+	root.Handle(pat.New("/albums/*", albums)
 
 	// e.g., GET /users/carl
-	users.HandleC(pat.Get("/:name"), renderProfile)
+	users.Handle(pat.Get("/:name"), renderProfile)
 	// e.g., POST /albums/
-	albums.HandleC(pat.Post("/"), newAlbum)
+	albums.Handle(pat.Post("/"), newAlbum)
 */
 func SubMux() *Mux {
 	m := &Mux{}
