@@ -3,7 +3,6 @@ package goji
 import (
 	"context"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"goji.io/internal"
@@ -14,14 +13,13 @@ func TestDispatch(t *testing.T) {
 
 	var d dispatch
 
-	w := httptest.NewRecorder()
-	r, _ := http.NewRequest("GET", "/", nil)
+	w, r := wr()
 	d.ServeHTTP(w, r)
 	if w.Code != 404 {
 		t.Errorf("status: expected %d, got %d", 404, w.Code)
 	}
 
-	w = httptest.NewRecorder()
+	w, r = wr()
 	h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(123)
 	})
