@@ -17,18 +17,18 @@ For instance, given middleware A, B, and C, added in that order, Goji will
 behave similarly to this snippet:
 
 	augmentedHandler := A(B(C(yourHandler)))
-	augmentedHandler.ServeHTTPC(ctx, w, r)
+	augmentedHandler.ServeHTTP(w, r)
 
 Assuming each of A, B, and C look something like this:
 
-	func A(inner goji.Handler) goji.Handler {
+	func A(inner http.Handler) http.Handler {
 		log.Print("A: called")
-		mw := func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+		mw := func(w http.ResponseWriter, r *http.Request) {
 			log.Print("A: before")
-			inner.ServeHTTPC(ctx, w, r)
+			inner.ServeHTTP(w, r)
 			log.Print("A: after")
 		}
-		return goji.HandlerFunc(mw)
+		return http.HandlerFunc(mw)
 	}
 
 we'd expect to see the following in the log:

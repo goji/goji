@@ -39,7 +39,7 @@ func hello(w http.ResponseWriter, r *http.Request) {
 
 func main() {
         mux := goji.NewMux()
-        mux.HandleFuncC(pat.Get("/hello/:name"), hello)
+        mux.HandleFunc(pat.Get("/hello/:name"), hello)
 
         http.ListenAndServe("localhost:8000", mux)
 }
