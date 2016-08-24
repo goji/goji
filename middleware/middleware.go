@@ -11,8 +11,8 @@ import (
 	"net/http"
 
 	"goji.io"
-	"goji.io/internal"
-	"golang.org/x/net/context"
+	"github.com/weave-lab/goji/internal"
+	"context"
 )
 
 /*

@@ -3,7 +3,7 @@ package internal
 import (
 	"net/http"
 
-	"golang.org/x/net/context"
+	"context"
 )
 
 // ContextWrapper is a standard bridge type from http.Handlers to context-aware

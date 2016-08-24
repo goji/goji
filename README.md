@@ -29,7 +29,7 @@ import (
 
         "goji.io"
         "goji.io/pat"
-        "golang.org/x/net/context"
+        "context"
 )
 
 func hello(ctx context.Context, w http.ResponseWriter, r *http.Request) {

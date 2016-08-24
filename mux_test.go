@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"testing"
 
-	"goji.io/internal"
-	"golang.org/x/net/context"
+	"github.com/weave-lab/goji/internal"
+	"context"
 )
 
 func TestMuxExistingPath(t *testing.T) {

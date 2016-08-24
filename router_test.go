@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"testing"
 
-	"goji.io/internal"
-	"golang.org/x/net/context"
+	"github.com/weave-lab/goji/internal"
+	"context"
 )
 
 func TestNoMatch(t *testing.T) {

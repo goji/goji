@@ -87,7 +87,7 @@ import (
 	"strings"
 
 	"goji.io/pattern"
-	"golang.org/x/net/context"
+	"context"
 )
 
 type patNames []struct {

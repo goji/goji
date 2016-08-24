@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"goji.io/pattern"
-	"golang.org/x/net/context"
+	"context"
 )
 
 func mustReq(method, path string) (context.Context, *http.Request) {

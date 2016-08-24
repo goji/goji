@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strings"
 
-	"goji.io/internal"
-	"golang.org/x/net/context"
+	"github.com/weave-lab/goji/internal"
+	"context"
 )
 
 type router struct {

@@ -3,8 +3,9 @@ package goji
 import (
 	"net/http"
 
-	"goji.io/internal"
-	"golang.org/x/net/context"
+	"context"
+
+	"github.com/weave-lab/goji/internal"
 )
 
 type dispatch struct{}

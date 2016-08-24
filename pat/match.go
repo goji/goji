@@ -3,9 +3,9 @@ package pat
 import (
 	"sort"
 
-	"goji.io/internal"
+	"github.com/weave-lab/goji/internal"
 	"goji.io/pattern"
-	"golang.org/x/net/context"
+	"context"
 )
 
 type match struct {

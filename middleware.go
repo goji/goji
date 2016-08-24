@@ -3,7 +3,7 @@ package goji
 import (
 	"net/http"
 
-	"golang.org/x/net/context"
+	"context"
 )
 
 /*

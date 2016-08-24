@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"goji.io/pattern"
-	"golang.org/x/net/context"
+	"context"
 )
 
 func TestExistingContext(t *testing.T) {

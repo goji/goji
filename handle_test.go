@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"golang.org/x/net/context"
+	"context"
 )
 
 func TestHandle(t *testing.T) {

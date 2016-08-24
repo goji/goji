@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"goji.io/internal"
-	"golang.org/x/net/context"
+	"context"
 )
 
 /*
