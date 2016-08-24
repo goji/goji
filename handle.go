@@ -3,8 +3,9 @@ package goji
 import (
 	"net/http"
 
-	"goji.io/internal"
 	"context"
+
+	"github.com/weave-lab/goji/internal"
 )
 
 /*
