@@ -86,8 +86,9 @@ import (
 	"sort"
 	"strings"
 
-	"goji.io/pattern"
 	"context"
+
+	"github.com/weave-lab/goji/pattern"
 )
 
 type patNames []struct {

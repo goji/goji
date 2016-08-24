@@ -5,15 +5,16 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/weave-lab/goji/internal"
 	"context"
+
+	"github.com/weave-lab/goji/internal"
 )
 
 func TestNoMatch(t *testing.T) {
 	t.Parallel()
 
 	var rt router
-	rt.add(boolPattern(false), HandlerFunc(func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	rt.add(boolPattern(false), http.HandlerFunc(func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		t.Fatal("did not expect handler to be called")
 	}))
 	_, r := wr()

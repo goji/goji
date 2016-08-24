@@ -19,7 +19,7 @@ type route struct {
 	Handler
 }
 
-func (rt *router) add(p Pattern, h Handler) {
+func (rt *router) add(p Pattern, h http.Handler) {
 	*rt = append(*rt, route{p, h})
 }
 

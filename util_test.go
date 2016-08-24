@@ -5,8 +5,9 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	"github.com/weave-lab/goji/internal"
 	"context"
+
+	"github.com/weave-lab/goji/internal"
 )
 
 type boolPattern bool
@@ -58,7 +59,7 @@ func (t testPattern) HTTPMethods() map[string]struct{} {
 
 type intHandler int
 
-func (i intHandler) ServeHTTPC(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+func (i intHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func wr() (*httptest.ResponseRecorder, *http.Request) {

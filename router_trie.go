@@ -7,8 +7,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/weave-lab/goji/internal"
 	"context"
+
+	"github.com/weave-lab/goji/internal"
 )
 
 type router struct {
@@ -19,7 +20,7 @@ type router struct {
 
 type route struct {
 	Pattern
-	Handler
+	http.Handler
 }
 
 type child struct {
@@ -32,7 +33,7 @@ type trieNode struct {
 	children []child
 }
 
-func (rt *router) add(p Pattern, h Handler) {
+func (rt *router) add(p Pattern, h http.Handler) {
 	i := len(rt.routes)
 	rt.routes = append(rt.routes, route{p, h})
 

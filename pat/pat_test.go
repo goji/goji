@@ -5,8 +5,9 @@ import (
 	"reflect"
 	"testing"
 
-	"goji.io/pattern"
 	"context"
+
+	"github.com/weave-lab/goji/pattern"
 )
 
 func mustReq(method, path string) (context.Context, *http.Request) {

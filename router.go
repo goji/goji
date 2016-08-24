@@ -1,14 +1,16 @@
 package goji
 
 import (
-	"github.com/weave-lab/goji/internal"
 	"context"
+	"net/http"
+
+	"github.com/weave-lab/goji/internal"
 )
 
 type match struct {
 	context.Context
 	p Pattern
-	h Handler
+	h http.Handler
 }
 
 func (m match) Value(key interface{}) interface{} {
