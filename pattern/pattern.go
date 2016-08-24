@@ -13,8 +13,9 @@ to standardize on a few common interfaces may find this package useful.
 package pattern
 
 import (
-	"github.com/weave-lab/goji/internal"
 	"context"
+
+	"github.com/weave-lab/goji/internal"
 )
 
 /*

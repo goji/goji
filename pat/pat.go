@@ -81,12 +81,11 @@ instance.
 package pat
 
 import (
+	"context"
 	"net/http"
 	"regexp"
 	"sort"
 	"strings"
-
-	"context"
 
 	"github.com/weave-lab/goji/pattern"
 )

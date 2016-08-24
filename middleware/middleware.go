@@ -8,9 +8,8 @@ middleware package.
 package middleware
 
 import (
-	"net/http"
-
 	"context"
+	"net/http"
 
 	"github.com/weave-lab/goji"
 	"github.com/weave-lab/goji/internal"

@@ -1,10 +1,9 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 	"testing"
-
-	"context"
 )
 
 type testPattern bool
