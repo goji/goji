@@ -15,7 +15,7 @@ behave similarly to this snippet:
 	augmentedHandler := A(B(C(yourHandler)))
 	augmentedHandler.ServeHTTPC(ctx, w, r)
 Assuming each of A, B, and C look something like this:
-	func A(inner goji.Handler) goji.Handler {
+	func A(inner http.Handler) http.Handler {
 		log.Print("A: called")
 		mw := func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			log.Print("A: before")

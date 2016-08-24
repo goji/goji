@@ -115,7 +115,7 @@ func TestRouter(t *testing.T) {
 
 		var out []int
 		for *mark = 0; *mark < len(TestRoutes); *mark++ {
-			ctx := rt.route(ctx, r)
+			ctx = rt.route(ctx, r)
 			if h := ctx.Value(internal.Handler); h != nil {
 				out = append(out, int(h.(intHandler)))
 			} else {
