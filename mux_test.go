@@ -12,7 +12,7 @@ import (
 func TestMuxExistingPath(t *testing.T) {
 	m := NewMux()
 	handler := func(w http.ResponseWriter, r *http.Request) {
-		if path := r.Context().Value(internal.Path).(string); path != "/" {
+		if path := r.Context().Value(internal.Path).(string); path != "" {
 			t.Errorf("expected path=/, got %q", path)
 		}
 	}
