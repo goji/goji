@@ -1,15 +1,8 @@
-go_import_path: goji.io
 language: go
-sudo: false
 
 matrix:
   include:
-    - go: 1.5
-    - go: 1.5.1
-    - go: 1.5.2
-    - go: 1.5.3
-    - go: 1.6
-    - go: tip
+    - go: 1.7
 
 script:
   - go test -cover -race ./...
