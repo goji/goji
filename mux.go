@@ -2,6 +2,7 @@ package goji
 
 import (
 	"net/http"
+	"strings"
 
 	"context"
 
@@ -68,6 +69,9 @@ func SubMux() *Mux {
 ServeHTTP implements net/http.Handler. It uses context.Background as the root context
 */
 func (m *Mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if strings.HasSuffix(r.URL.Path, "/") {
+		r.URL.Path = strings.TrimSuffix(r.URL.Path, "/")
+	}
 	if m.root {
 		r = r.WithContext(context.WithValue(r.Context(), internal.Path, r.URL.EscapedPath()))
 	}
