@@ -1,12 +1,12 @@
 package goji
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 
 	"goji.io/internal"
-	"golang.org/x/net/context"
 )
 
 type boolPattern bool

@@ -1,8 +1,9 @@
 package goji
 
 import (
+	"context"
+
 	"goji.io/internal"
-	"golang.org/x/net/context"
 )
 
 type match struct {

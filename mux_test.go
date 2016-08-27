@@ -1,11 +1,11 @@
 package goji
 
 import (
+	"context"
 	"net/http"
 	"testing"
 
 	"goji.io/internal"
-	"golang.org/x/net/context"
 )
 
 func TestMuxExistingPath(t *testing.T) {

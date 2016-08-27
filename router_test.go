@@ -1,12 +1,12 @@
 package goji
 
 import (
+	"context"
 	"net/http"
 	"reflect"
 	"testing"
 
 	"goji.io/internal"
-	"golang.org/x/net/context"
 )
 
 func TestNoMatch(t *testing.T) {

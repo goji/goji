@@ -1,12 +1,12 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 	"testing"
 
 	"goji.io"
 	"goji.io/internal"
-	"golang.org/x/net/context"
 )
 
 type testPattern bool

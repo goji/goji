@@ -8,11 +8,11 @@ middleware package.
 package middleware
 
 import (
+	"context"
 	"net/http"
 
 	"goji.io"
 	"goji.io/internal"
-	"golang.org/x/net/context"
 )
 
 /*

@@ -1,12 +1,12 @@
 package goji
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"goji.io/internal"
-	"golang.org/x/net/context"
 )
 
 func TestDispatch(t *testing.T) {

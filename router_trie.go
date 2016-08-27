@@ -3,12 +3,12 @@
 package goji
 
 import (
+	"context"
 	"net/http"
 	"sort"
 	"strings"
 
 	"goji.io/internal"
-	"golang.org/x/net/context"
 )
 
 type router struct {

@@ -1,10 +1,10 @@
 package goji
 
 import (
+	"context"
 	"net/http"
 
 	"goji.io/internal"
-	"golang.org/x/net/context"
 )
 
 type dispatch struct{}

@@ -1,10 +1,9 @@
 package goji
 
 import (
+	"context"
 	"net/http"
 	"testing"
-
-	"golang.org/x/net/context"
 )
 
 func expectSequence(t *testing.T, ch chan string, seq ...string) {
