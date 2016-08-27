@@ -25,10 +25,12 @@ func TestExistingContext(t *testing.T) {
 	})
 	ctx = context.WithValue(ctx, "user", "carl")
 
-	ctx = pat.Match(ctx, req)
-	if ctx == nil {
+	req = req.WithContext(ctx)
+	req = pat.Match(req)
+	if req == nil {
 		t.Fatalf("expected pattern to match")
 	}
+	ctx = req.Context()
 
 	expected := map[pattern.Variable]interface{}{
 		"c": "foo",

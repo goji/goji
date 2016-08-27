@@ -9,13 +9,13 @@ import (
 	"goji.io/pattern"
 )
 
-func mustReq(method, path string) (context.Context, *http.Request) {
+func mustReq(method, path string) *http.Request {
 	req, err := http.NewRequest(method, path, nil)
 	if err != nil {
 		panic(err)
 	}
 	ctx := pattern.SetPath(context.Background(), req.URL.EscapedPath())
-	return ctx, req
+	return req.WithContext(ctx)
 }
 
 type PatTest struct {
@@ -82,14 +82,15 @@ func TestPat(t *testing.T) {
 			t.Errorf("[%q %q] String()=%q, expected=%q", test.pat, test.req, str, test.pat)
 		}
 
-		ctx := pat.Match(mustReq("GET", test.req))
-		if (ctx != nil) != test.match {
-			t.Errorf("[%q %q] match=%v, expected=%v", test.pat, test.req, ctx != nil, test.match)
+		req := pat.Match(mustReq("GET", test.req))
+		if (req != nil) != test.match {
+			t.Errorf("[%q %q] match=%v, expected=%v", test.pat, test.req, req != nil, test.match)
 		}
-		if ctx == nil {
+		if req == nil {
 			continue
 		}
 
+		ctx := req.Context()
 		if path := pattern.Path(ctx); path != test.path {
 			t.Errorf("[%q %q] path=%q, expected=%q", test.pat, test.req, path, test.path)
 		}
@@ -113,7 +114,8 @@ func TestBadPathEncoding(t *testing.T) {
 	// This one is hard to fit into the table-driven test above since Go
 	// refuses to have anything to do with poorly encoded URLs.
 	ctx := pattern.SetPath(context.Background(), "/%nope")
-	if New("/:name").Match(ctx, nil) != nil {
+	r, _ := http.NewRequest("GET", "/", nil)
+	if New("/:name").Match(r.WithContext(ctx)) != nil {
 		t.Error("unexpected match")
 	}
 }
@@ -158,10 +160,11 @@ func TestParam(t *testing.T) {
 	t.Parallel()
 
 	pat := New("/hello/:name")
-	ctx := pat.Match(mustReq("GET", "/hello/carl"))
-	if ctx == nil {
+	req := pat.Match(mustReq("GET", "/hello/carl"))
+	if req == nil {
 		t.Fatal("expected a match")
 	}
+	ctx := req.Context()
 	if name := Param(ctx, "name"); name != "carl" {
 		t.Errorf("name=%q, expected %q", name, "carl")
 	}

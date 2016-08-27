@@ -1,7 +1,6 @@
 package goji
 
 import (
-	"context"
 	"net/http"
 	"testing"
 )
@@ -14,7 +13,7 @@ func expectSequence(t *testing.T, ch chan string, seq ...string) {
 	}
 }
 
-func TestMiddlewareNetHTTP(t *testing.T) {
+func TestMiddleware(t *testing.T) {
 	t.Parallel()
 
 	m := NewMux()
@@ -44,32 +43,15 @@ func TestMiddlewareNetHTTP(t *testing.T) {
 	expectSequence(t, ch, "before one", "before two", "handler", "after two", "after one")
 }
 
-func makeMiddleware(ch chan string, name string) func(Handler) Handler {
-	return func(h Handler) Handler {
-		fn := func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+func makeMiddleware(ch chan string, name string) func(http.Handler) http.Handler {
+	return func(h http.Handler) http.Handler {
+		fn := func(w http.ResponseWriter, r *http.Request) {
 			ch <- "before " + name
-			h.ServeHTTPC(ctx, w, r)
+			h.ServeHTTP(w, r)
 			ch <- "after " + name
 		}
-		return HandlerFunc(fn)
+		return http.HandlerFunc(fn)
 	}
-}
-
-func TestMiddlewareC(t *testing.T) {
-	t.Parallel()
-
-	m := NewMux()
-	ch := make(chan string, 10)
-	m.UseC(makeMiddleware(ch, "one"))
-	m.UseC(makeMiddleware(ch, "two"))
-	m.Handle(boolPattern(true), HandlerFunc(func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-		ch <- "handler"
-	}))
-
-	w, r := wr()
-	m.ServeHTTPC(context.Background(), w, r)
-
-	expectSequence(t, ch, "before one", "before two", "handler", "after two", "after one")
 }
 
 func TestMiddlewareReconfigure(t *testing.T) {
@@ -77,21 +59,21 @@ func TestMiddlewareReconfigure(t *testing.T) {
 
 	m := NewMux()
 	ch := make(chan string, 10)
-	m.UseC(makeMiddleware(ch, "one"))
-	m.UseC(makeMiddleware(ch, "two"))
-	m.Handle(boolPattern(true), HandlerFunc(func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	m.Use(makeMiddleware(ch, "one"))
+	m.Use(makeMiddleware(ch, "two"))
+	m.Handle(boolPattern(true), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ch <- "handler"
 	}))
 
 	w, r := wr()
-	m.ServeHTTPC(context.Background(), w, r)
+	m.ServeHTTP(w, r)
 
 	expectSequence(t, ch, "before one", "before two", "handler", "after two", "after one")
 
-	m.UseC(makeMiddleware(ch, "three"))
+	m.Use(makeMiddleware(ch, "three"))
 
 	w, r = wr()
-	m.ServeHTTPC(context.Background(), w, r)
+	m.ServeHTTP(w, r)
 
 	expectSequence(t, ch, "before one", "before two", "before three",
 		"handler", "after three", "after two", "after one")

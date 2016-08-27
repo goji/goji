@@ -10,26 +10,30 @@ import (
 
 func TestMuxExistingPath(t *testing.T) {
 	m := NewMux()
-	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
 		if path := ctx.Value(internal.Path).(string); path != "/" {
 			t.Errorf("expected path=/, got %q", path)
 		}
 	}
-	m.HandleFuncC(boolPattern(true), handler)
+	m.HandleFunc(boolPattern(true), handler)
 	w, r := wr()
 	ctx := context.WithValue(context.Background(), internal.Path, "/hello")
-	m.ServeHTTPC(ctx, w, r)
+	r = r.WithContext(ctx)
+	m.ServeHTTP(w, r)
 }
 
 func TestSubMuxExistingPath(t *testing.T) {
 	m := SubMux()
-	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
 		if path := ctx.Value(internal.Path).(string); path != "/hello" {
 			t.Errorf("expected path=/hello, got %q", path)
 		}
 	}
-	m.HandleFuncC(boolPattern(true), handler)
+	m.HandleFunc(boolPattern(true), handler)
 	w, r := wr()
 	ctx := context.WithValue(context.Background(), internal.Path, "/hello")
-	m.ServeHTTPC(ctx, w, r)
+	r = r.WithContext(ctx)
+	m.ServeHTTP(w, r)
 }

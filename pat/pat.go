@@ -86,8 +86,9 @@ import (
 	"sort"
 	"strings"
 
-	"goji.io/pattern"
 	"context"
+
+	"goji.io/pattern"
 )
 
 type patNames []struct {
@@ -189,7 +190,7 @@ the request matches the request.
 
 This function satisfies goji.Pattern.
 */
-func (p *Pattern) Match(ctx context.Context, r *http.Request) context.Context {
+func (p *Pattern) Match(r *http.Request) *http.Request {
 	if p.methods != nil {
 		if _, ok := p.methods[r.Method]; !ok {
 			return nil
@@ -197,6 +198,7 @@ func (p *Pattern) Match(ctx context.Context, r *http.Request) context.Context {
 	}
 
 	// Check Path
+	ctx := r.Context()
 	path := pattern.Path(ctx)
 	var scratch []string
 	if p.wildcard {
@@ -251,7 +253,7 @@ func (p *Pattern) Match(ctx context.Context, r *http.Request) context.Context {
 		}
 	}
 
-	return &match{ctx, p, scratch}
+	return r.WithContext(&match{ctx, p, scratch})
 }
 
 /*

@@ -13,7 +13,7 @@ func TestNoMatch(t *testing.T) {
 	t.Parallel()
 
 	var rt router
-	rt.add(boolPattern(false), HandlerFunc(func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	rt.add(boolPattern(false), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		t.Fatal("did not expect handler to be called")
 	}))
 	_, r := wr()
@@ -21,9 +21,11 @@ func TestNoMatch(t *testing.T) {
 	ctx = context.WithValue(ctx, internal.Pattern, boolPattern(true))
 	ctx = context.WithValue(ctx, internal.Pattern, boolPattern(true))
 	ctx = context.WithValue(ctx, "answer", 42)
-
 	ctx = context.WithValue(ctx, internal.Path, "/")
-	ctx = rt.route(ctx, r)
+
+	r = r.WithContext(ctx)
+	r = rt.route(r)
+	ctx = r.Context()
 
 	if p := ctx.Value(internal.Pattern); p != nil {
 		t.Errorf("unexpected pattern %v", p)
@@ -111,10 +113,12 @@ func TestRouter(t *testing.T) {
 			panic(err)
 		}
 		ctx := context.WithValue(context.Background(), internal.Path, test.path)
+		r = r.WithContext(ctx)
 
 		var out []int
 		for *mark = 0; *mark < len(TestRoutes); *mark++ {
-			ctx := rt.route(ctx, r)
+			r := rt.route(r)
+			ctx := r.Context()
 			if h := ctx.Value(internal.Handler); h != nil {
 				out = append(out, int(h.(intHandler)))
 			} else {
