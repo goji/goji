@@ -4,11 +4,12 @@ sudo: false
 
 matrix:
   include:
-    - go: 1.5
-    - go: 1.5.1
-    - go: 1.5.2
-    - go: 1.5.3
+    - go: 1.5.4
     - go: 1.6
+    - go: 1.6.1
+    - go: 1.6.2
+    - go: 1.6.3
+    - go: 1.7
     - go: tip
 
 script:
