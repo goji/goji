@@ -5,16 +5,16 @@ Goji
 
 Goji is a HTTP request multiplexer, similar to [`net/http.ServeMux`][servemux].
 It compares incoming requests to a list of registered [Patterns][pattern], and
-dispatches to the [Handler][handler] that corresponds to the first matching
+dispatches to the [http.Handler][handler] that corresponds to the first matching
 Pattern. Goji also supports [Middleware][middleware] (composable shared
-functionality applied to every request) and uses the de facto standard
-[`x/net/context`][context] to store request-scoped values.
+functionality applied to every request) and uses the standard
+[`context`][context] package to store request-scoped values.
 
 [servemux]: https://golang.org/pkg/net/http/#ServeMux
 [pattern]: https://godoc.org/goji.io#Pattern
-[handler]: https://godoc.org/goji.io#Handler
+[handler]: https://golang.org/pkg/net/http/#Handler
 [middleware]: https://godoc.org/goji.io#Mux.Use
-[context]: https://godoc.org/golang.org/x/net/context
+[context]: https://golang.org/pkg/context
 
 
 Quick Start
@@ -29,17 +29,17 @@ import (
 
         "goji.io"
         "goji.io/pat"
-        "golang.org/x/net/context"
 )
 
-func hello(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+func hello(w http.ResponseWriter, r *http.Request) {
+        ctx := r.Context()
         name := pat.Param(ctx, "name")
         fmt.Fprintf(w, "Hello, %s!", name)
 }
 
 func main() {
         mux := goji.NewMux()
-        mux.HandleFuncC(pat.Get("/hello/:name"), hello)
+        mux.HandleFunc(pat.Get("/hello/:name"), hello)
 
         http.ListenAndServe("localhost:8000", mux)
 }
