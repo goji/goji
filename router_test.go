@@ -130,3 +130,23 @@ func TestRouter(t *testing.T) {
 		}
 	}
 }
+
+type contextPattern struct{}
+
+func (contextPattern) Match(r *http.Request) *http.Request {
+	return r.WithContext(context.WithValue(r.Context(), "hello", "world"))
+}
+
+func TestRouterContextPropagation(t *testing.T) {
+	t.Parallel()
+
+	var rt router
+	rt.add(contextPattern{}, intHandler(0))
+	_, r := wr()
+	r = r.WithContext(context.WithValue(r.Context(), internal.Path, "/"))
+	r2 := rt.route(r)
+	ctx := r2.Context()
+	if hello := ctx.Value("hello").(string); hello != "world" {
+		t.Fatalf("routed request didn't include correct key from pattern: %q", hello)
+	}
+}

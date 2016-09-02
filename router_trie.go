@@ -85,7 +85,7 @@ func (rt *router) route(r *http.Request) *http.Request {
 	for _, i := range tn.routes {
 		if r2 := rt.routes[i].Match(r); r2 != nil {
 			return r2.WithContext(&match{
-				Context: ctx,
+				Context: r2.Context(),
 				p:       rt.routes[i].Pattern,
 				h:       rt.routes[i].Handler,
 			})
