@@ -1,5 +1,6 @@
 Goji
 ====
+[![GoDoc](https://godoc.org/github.com/goji/goji?status.svg)](https://godoc.org/github.com/goji/goji/) [![Build Status](https://travis-ci.org/goji/goji.svg)](https://travis-ci.org/goji/goji)
 
 [![GoDoc](https://godoc.org/goji.io?status.svg)](https://godoc.org/goji.io) [![Build Status](https://travis-ci.org/goji/goji.svg?branch=master)](https://travis-ci.org/goji/goji)
 
@@ -86,3 +87,8 @@ broader Go community's [Code of Conduct][conduct].
 
 [berries]: https://groups.google.com/forum/#!forum/gojiberries
 [conduct]: https://golang.org/conduct
+
+License
+-------
+
+Goji is released under the MIT license. See the LICENSE file for full details.
