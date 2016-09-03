@@ -32,8 +32,7 @@ import (
 )
 
 func hello(w http.ResponseWriter, r *http.Request) {
-        ctx := r.Context()
-        name := pat.Param(ctx, "name")
+        name := pat.Param(r, "name")
         fmt.Fprintf(w, "Hello, %s!", name)
 }
 
