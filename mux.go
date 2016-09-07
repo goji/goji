@@ -1,10 +1,10 @@
 package goji
 
 import (
+	"context"
 	"net/http"
 	"strings"
-
-	"context"
+	"sync/atomic"
 
 	"github.com/weave-lab/goji/internal"
 )
@@ -65,11 +65,22 @@ func SubMux() *Mux {
 	return m
 }
 
+var trimTrailingSlash = int32(1)
+
+func TrimTrailingSlash(trim bool) {
+	n := int32(0)
+	if trim {
+		n = 1
+	}
+
+	atomic.SwapInt32(&trimTrailingSlash, n)
+}
+
 /*
 ServeHTTP implements net/http.Handler. It uses context.Background as the root context
 */
 func (m *Mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" && strings.HasSuffix(r.URL.Path, "/") {
+	if trimTrailingSlash > 0 && r.URL.Path != "/" {
 		r.URL.Path = strings.TrimSuffix(r.URL.Path, "/")
 	}
 	if m.root {
