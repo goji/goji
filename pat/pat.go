@@ -86,8 +86,6 @@ import (
 	"sort"
 	"strings"
 
-	"context"
-
 	"goji.io/pattern"
 )
 
@@ -294,11 +292,11 @@ and the URL Path:
 
 	/user/carl
 
-a call to Param(ctx, "name") would return the string "carl". It is the caller's
+a call to Param(r, "name") would return the string "carl". It is the caller's
 responsibility to ensure that the variable has been bound. Attempts to access
 variables that have not been set (or which have been invalidly set) are
 considered programmer errors and will trigger a panic.
 */
-func Param(ctx context.Context, name string) string {
-	return ctx.Value(pattern.Variable(name)).(string)
+func Param(r *http.Request, name string) string {
+	return r.Context().Value(pattern.Variable(name)).(string)
 }

@@ -164,8 +164,7 @@ func TestParam(t *testing.T) {
 	if req == nil {
 		t.Fatal("expected a match")
 	}
-	ctx := req.Context()
-	if name := Param(ctx, "name"); name != "carl" {
+	if name := Param(req, "name"); name != "carl" {
 		t.Errorf("name=%q, expected %q", name, "carl")
 	}
 }

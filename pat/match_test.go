@@ -39,7 +39,7 @@ func TestExistingContext(t *testing.T) {
 		"l": "quux",
 	}
 	for k, v := range expected {
-		if p := Param(ctx, string(k)); p != v {
+		if p := Param(req, string(k)); p != v {
 			t.Errorf("expected %s=%q, got %q", k, v, p)
 		}
 	}
