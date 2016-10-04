@@ -292,11 +292,14 @@ and the URL Path:
 
 	/user/carl
 
-a call to Param(ctx, "name") would return the string "carl". It is the caller's
-responsibility to ensure that the variable has been bound. Attempts to access
-variables that have not been set (or which have been invalidly set) are
-considered programmer errors and will trigger a panic.
+a call to Param(ctx, "name") would return the string "carl".
+
+If a parameter with the given name does not exist in the URL, an empty string
+is returned.
 */
 func Param(ctx context.Context, name string) string {
-	return ctx.Value(pattern.Variable(name)).(string)
+	if urlParam, ok := ctx.Value(pattern.Variable(name)).(string); ok {
+		return urlParam
+	}
+	return ""
 }

@@ -166,3 +166,15 @@ func TestParam(t *testing.T) {
 		t.Errorf("name=%q, expected %q", name, "carl")
 	}
 }
+
+func TestMissingParam(t *testing.T) {
+	t.Parallel()
+	pat := New("/hello/")
+	ctx := pat.Match(mustReq("GET", "/hello/"))
+	if ctx == nil {
+		t.Fatal("expected a match")
+	}
+	if name := Param(ctx, "name"); name != "" {
+		t.Errorf("name=%q, expected %q", name, "")
+	}
+}
