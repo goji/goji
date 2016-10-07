@@ -1,19 +1,19 @@
 package goji
 
 import (
+	"context"
 	"net/http"
 	"reflect"
 	"testing"
 
 	"goji.io/internal"
-	"golang.org/x/net/context"
 )
 
 func TestNoMatch(t *testing.T) {
 	t.Parallel()
 
 	var rt router
-	rt.add(boolPattern(false), HandlerFunc(func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	rt.add(boolPattern(false), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		t.Fatal("did not expect handler to be called")
 	}))
 	_, r := wr()

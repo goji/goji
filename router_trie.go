@@ -3,12 +3,12 @@
 package goji
 
 import (
+	"context"
 	"net/http"
 	"sort"
 	"strings"
 
 	"goji.io/internal"
-	"golang.org/x/net/context"
 )
 
 type router struct {
@@ -19,7 +19,7 @@ type router struct {
 
 type route struct {
 	Pattern
-	Handler
+	http.Handler
 }
 
 type child struct {
@@ -32,7 +32,7 @@ type trieNode struct {
 	children []child
 }
 
-func (rt *router) add(p Pattern, h Handler) {
+func (rt *router) add(p Pattern, h http.Handler) {
 	i := len(rt.routes)
 	rt.routes = append(rt.routes, route{p, h})
 

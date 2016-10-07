@@ -8,11 +8,11 @@ middleware package.
 package middleware
 
 import (
+	"context"
 	"net/http"
 
 	"goji.io"
 	"goji.io/internal"
-	"golang.org/x/net/context"
 )
 
 /*
@@ -47,33 +47,18 @@ The handler returned by this function is the one that will be dispatched to at
 the end of the middleware stack. If the returned Handler is nil, http.NotFound
 will be used instead.
 */
-func Handler(ctx context.Context) goji.Handler {
+func Handler(ctx context.Context) http.Handler {
 	h := ctx.Value(internal.Handler)
 	if h == nil {
 		return nil
 	}
-	return h.(goji.Handler)
+	return h.(http.Handler)
 }
 
 /*
 SetHandler returns a new context in which the given Handler was most recently
 matched and which consequently will be dispatched to.
 */
-func SetHandler(ctx context.Context, h goji.Handler) context.Context {
+func SetHandler(ctx context.Context, h http.Handler) context.Context {
 	return context.WithValue(ctx, internal.Handler, h)
-}
-
-/*
-UnwrapHandler extracts the original http.Handler from a Goji-wrapped Handler
-object, or returns nil if the given Handler has not been wrapped in this way.
-
-This function is necessary because Goji uses goji.Handler as its native data
-type internally, and uses a wrapper struct to convert all http.Handlers it is
-passed into goji.Handlers.
-*/
-func UnwrapHandler(h goji.Handler) http.Handler {
-	if cw, ok := h.(internal.ContextWrapper); ok {
-		return cw.Handler
-	}
-	return nil
 }

@@ -81,13 +81,13 @@ instance.
 package pat
 
 import (
+	"context"
 	"net/http"
 	"regexp"
 	"sort"
 	"strings"
 
 	"goji.io/pattern"
-	"golang.org/x/net/context"
 )
 
 type patNames []struct {

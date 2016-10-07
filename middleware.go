@@ -1,10 +1,6 @@
 package goji
 
-import (
-	"net/http"
-
-	"golang.org/x/net/context"
-)
+import "net/http"
 
 /*
 Use appends a middleware to the Mux's middleware stack.
@@ -21,18 +17,18 @@ For instance, given middleware A, B, and C, added in that order, Goji will
 behave similarly to this snippet:
 
 	augmentedHandler := A(B(C(yourHandler)))
-	augmentedHandler.ServeHTTPC(ctx, w, r)
+	augmentedHandler.ServeHTTP(w, r)
 
 Assuming each of A, B, and C look something like this:
 
-	func A(inner goji.Handler) goji.Handler {
+	func A(inner http.Handler) http.Handler {
 		log.Print("A: called")
-		mw := func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+		mw := func(w http.ResponseWriter, r *http.Request) {
 			log.Print("A: before")
-			inner.ServeHTTPC(ctx, w, r)
+			inner.ServeHTTP(w, r)
 			log.Print("A: after")
 		}
-		return goji.HandlerFunc(mw)
+		return http.HandlerFunc(mw)
 	}
 
 we'd expect to see the following in the log:
@@ -67,22 +63,9 @@ use by multiple goroutines. It is not safe to concurrently register middleware
 from multiple goroutines, or to register middleware concurrently with requests.
 */
 func (m *Mux) Use(middleware func(http.Handler) http.Handler) {
-	m.middleware = append(m.middleware, func(h Handler) Handler {
+	m.middleware = append(m.middleware, func(h http.Handler) http.Handler {
 		return outerBridge{middleware, h}
 	})
-	m.buildChain()
-}
-
-/*
-UseC appends a context-aware middleware to the Mux's middleware stack. See the
-documentation for Use for more information about the semantics of middleware.
-
-The Handler returned by the given middleware must be safe for concurrent use by
-multiple goroutines. It is not safe to concurrently register middleware from
-multiple goroutines, or to register middleware concurrently with requests.
-*/
-func (m *Mux) UseC(middleware func(Handler) Handler) {
-	m.middleware = append(m.middleware, middleware)
 	m.buildChain()
 }
 
@@ -97,19 +80,18 @@ func (m *Mux) buildChain() {
 }
 
 type innerBridge struct {
-	inner Handler
-	ctx   context.Context
+	inner http.Handler
 }
 
 func (b innerBridge) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	b.inner.ServeHTTPC(b.ctx, w, r)
+	b.inner.ServeHTTP(w, r)
 }
 
 type outerBridge struct {
 	mware func(http.Handler) http.Handler
-	inner Handler
+	inner http.Handler
 }
 
-func (b outerBridge) ServeHTTPC(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	b.mware(innerBridge{b.inner, ctx}).ServeHTTP(w, r)
+func (b outerBridge) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	b.mware(innerBridge{b.inner}).ServeHTTP(w, r)
 }
