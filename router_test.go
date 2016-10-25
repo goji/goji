@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"goji.io/internal"
+	"goji.io/pattern"
 )
 
 func TestNoMatch(t *testing.T) {
@@ -20,7 +21,7 @@ func TestNoMatch(t *testing.T) {
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, internal.Pattern, boolPattern(true))
 	ctx = context.WithValue(ctx, internal.Pattern, boolPattern(true))
-	ctx = context.WithValue(ctx, "answer", 42)
+	ctx = context.WithValue(ctx, pattern.Variable("answer"), 42)
 	ctx = context.WithValue(ctx, internal.Path, "/")
 
 	r = r.WithContext(ctx)
@@ -33,7 +34,7 @@ func TestNoMatch(t *testing.T) {
 	if h := ctx.Value(internal.Handler); h != nil {
 		t.Errorf("unexpected handler %v", h)
 	}
-	if h := ctx.Value("answer"); h != 42 {
+	if h := ctx.Value(pattern.Variable("answer")); h != 42 {
 		t.Errorf("context didn't work: got %v, wanted %v", h, 42)
 	}
 }
@@ -134,7 +135,7 @@ func TestRouter(t *testing.T) {
 type contextPattern struct{}
 
 func (contextPattern) Match(r *http.Request) *http.Request {
-	return r.WithContext(context.WithValue(r.Context(), "hello", "world"))
+	return r.WithContext(context.WithValue(r.Context(), pattern.Variable("hello"), "world"))
 }
 
 func TestRouterContextPropagation(t *testing.T) {
@@ -146,7 +147,7 @@ func TestRouterContextPropagation(t *testing.T) {
 	r = r.WithContext(context.WithValue(r.Context(), internal.Path, "/"))
 	r2 := rt.route(r)
 	ctx := r2.Context()
-	if hello := ctx.Value("hello").(string); hello != "world" {
+	if hello := ctx.Value(pattern.Variable("hello")).(string); hello != "world" {
 		t.Fatalf("routed request didn't include correct key from pattern: %q", hello)
 	}
 }
