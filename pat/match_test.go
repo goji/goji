@@ -23,7 +23,7 @@ func TestExistingContext(t *testing.T) {
 		"hello": "world",
 		"c":     "nope",
 	})
-	ctx = context.WithValue(ctx, "user", "carl")
+	ctx = context.WithValue(ctx, pattern.Variable("user"), "carl")
 
 	req = req.WithContext(ctx)
 	req = pat.Match(req)
@@ -54,7 +54,7 @@ func TestExistingContext(t *testing.T) {
 		t.Errorf("expected path=%q, got %q", "", path)
 	}
 
-	if user := ctx.Value("user"); user != "carl" {
+	if user := ctx.Value(pattern.Variable("user")); user != "carl" {
 		t.Errorf("expected user=%q, got %q", "carl", user)
 	}
 }
