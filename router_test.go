@@ -34,7 +34,7 @@ func TestNoMatch(t *testing.T) {
 	if h := ctx.Value(internal.Handler); h != nil {
 		t.Errorf("unexpected handler %v", h)
 	}
-	if h := ctx.Value("answer"); h != 42 {
+	if h := ctx.Value(pattern.Variable("answer")); h != 42 {
 		t.Errorf("context didn't work: got %v, wanted %v", h, 42)
 	}
 }
