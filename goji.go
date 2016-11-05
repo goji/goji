@@ -45,9 +45,9 @@ All operations on Patterns must be safe for concurrent use by multiple
 goroutines.
 */
 type Pattern interface {
-	// Match examines the request to determine if it matches some criteria,
-	// and if so returns a non-nil Request. This returned Request will be
-	// passed to the middleware stack and the final Handler.
+	// Match examines the input Request to determine if it matches some
+	// criteria, and if so returns a non-nil output Request. This returned
+	// Request will be passed to the middleware stack and the final Handler.
 	//
 	// Patterns often extract variables from the Request, for instance from
 	// the URL or from HTTP headers. In this case, it is common for the

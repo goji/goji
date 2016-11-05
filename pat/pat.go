@@ -183,8 +183,8 @@ func newWithMethods(pat string, methods ...string) *Pattern {
 }
 
 /*
-Match runs the Pat pattern on the given request, returning a non-nil context if
-the request matches the request.
+Match runs the Pat pattern on the given request, returning a non-nil output
+request if the input request matches the pattern.
 
 This function satisfies goji.Pattern.
 */
