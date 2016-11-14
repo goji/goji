@@ -59,7 +59,7 @@ API stability soon. Goji is suitable for use in production.
 
 Prior to Go 1.7, Goji promised API stability with a different API to the one
 that is offered today. The author broke this promise, and does not take this
-reach of trust lightly. While stability is obviously extremely important, the
+breach of trust lightly. While stability is obviously extremely important, the
 author and community have decided to follow the broader Go community in
 standardizing on the standard library copy of the `context` package.
 
