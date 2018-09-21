@@ -63,6 +63,14 @@ func SubMux() *Mux {
 	return m
 }
 
+// Match implements Pattern.
+func (m *Mux) Match(r *http.Request) *http.Request {
+	if m.router.match(r) {
+		return r
+	}
+	return nil
+}
+
 // ServeHTTP implements net/http.Handler.
 func (m *Mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if m.root {
