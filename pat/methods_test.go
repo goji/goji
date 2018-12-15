@@ -2,6 +2,19 @@ package pat
 
 import "testing"
 
+func TestNewWithMethods(t *testing.T) {
+	t.Parallel()
+	pat := NewWithMethods("/", "LOCK", "UNLOCK")
+	if pat.Match(mustReq("POST", "/")) != nil {
+		t.Errorf("pattern was LOCK/UNLOCK, but matched POST")
+	}
+	if pat.Match(mustReq("LOCK", "/")) == nil {
+		t.Errorf("pattern didn't match LOCK")
+	}
+	if pat.Match(mustReq("UNLOCK", "/")) == nil {
+		t.Errorf("pattern didn't match UNLOCK")
+	}
+}
 func TestDelete(t *testing.T) {
 	t.Parallel()
 	pat := Delete("/")
