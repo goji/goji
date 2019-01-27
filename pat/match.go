@@ -4,8 +4,8 @@ import (
 	"context"
 	"sort"
 
-	"goji.io/internal"
-	"goji.io/pattern"
+	"goji.io/v3/internal"
+	"goji.io/v3/pattern"
 )
 
 type match struct {

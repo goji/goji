@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"goji.io/pattern"
+	"goji.io/v3/pattern"
 )
 
 func TestExistingContext(t *testing.T) {

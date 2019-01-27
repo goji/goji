@@ -3,7 +3,7 @@ package goji
 import (
 	"net/http"
 
-	"goji.io/internal"
+	"goji.io/v3/internal"
 )
 
 type dispatch struct{}

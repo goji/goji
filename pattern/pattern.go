@@ -15,7 +15,7 @@ package pattern
 import (
 	"context"
 
-	"goji.io/internal"
+	"goji.io/v3/internal"
 )
 
 /*

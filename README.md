@@ -1,7 +1,7 @@
 Goji
 ====
 
-[![GoDoc](https://godoc.org/goji.io?status.svg)](https://godoc.org/goji.io) [![Build Status](https://travis-ci.org/goji/goji.svg?branch=master)](https://travis-ci.org/goji/goji)
+[![GoDoc](https://godoc.org/goji.io/v3?status.svg)](https://godoc.org/goji.io/v3) [![Build Status](https://travis-ci.org/goji/goji.svg?branch=master)](https://travis-ci.org/goji/goji)
 
 Goji is a HTTP request multiplexer, similar to [`net/http.ServeMux`][servemux].
 It compares incoming requests to a list of registered [Patterns][pattern], and
@@ -11,9 +11,9 @@ functionality applied to every request) and uses the standard
 [`context`][context] package to store request-scoped values.
 
 [servemux]: https://golang.org/pkg/net/http/#ServeMux
-[pattern]: https://godoc.org/goji.io#Pattern
+[pattern]: https://godoc.org/goji.io/v3#Pattern
 [handler]: https://golang.org/pkg/net/http/#Handler
-[middleware]: https://godoc.org/goji.io#Mux.Use
+[middleware]: https://godoc.org/goji.io/v3#Mux.Use
 [context]: https://golang.org/pkg/context
 
 
@@ -27,8 +27,8 @@ import (
         "fmt"
         "net/http"
 
-        "goji.io"
-        "goji.io/pat"
+        goji "goji.io/v3"
+        "goji.io/v3/pat"
 )
 
 func hello(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +46,7 @@ func main() {
 
 Please refer to [Goji's GoDoc Documentation][godoc] for a full API reference.
 
-[godoc]: https://godoc.org/goji.io
+[godoc]: https://godoc.org/goji.io/v3
 
 
 Stability

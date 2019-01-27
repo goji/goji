@@ -7,7 +7,7 @@ import (
 	"sort"
 	"strings"
 
-	"goji.io/internal"
+	"goji.io/v3/internal"
 )
 
 type router struct {

@@ -11,8 +11,8 @@ import (
 	"context"
 	"net/http"
 
-	"goji.io"
-	"goji.io/internal"
+	goji "goji.io/v3"
+	"goji.io/v3/internal"
 )
 
 /*

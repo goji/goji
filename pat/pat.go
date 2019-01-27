@@ -86,7 +86,7 @@ import (
 	"sort"
 	"strings"
 
-	"goji.io/pattern"
+	"goji.io/v3/pattern"
 )
 
 type patNames []struct {
