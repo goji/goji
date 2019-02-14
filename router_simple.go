@@ -19,6 +19,16 @@ func (rt *router) add(p Pattern, h http.Handler) {
 	*rt = append(*rt, route{p, h})
 }
 
+func (rt *router) match(r *http.Request) bool {
+	for _, route := range *rt {
+		if r2 := route.Match(r); r2 != nil && route.Handler != nil {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (rt *router) route(r *http.Request) *http.Request {
 	for _, route := range *rt {
 		if r2 := route.Match(r); r2 != nil {
