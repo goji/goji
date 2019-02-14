@@ -81,7 +81,10 @@ instance.
 package pat
 
 import (
+	"bytes"
+	"fmt"
 	"net/http"
+	"net/url"
 	"regexp"
 	"sort"
 	"strings"
@@ -268,6 +271,43 @@ String returns the pattern string that was used to create this Pattern.
 */
 func (p *Pattern) String() string {
 	return p.raw
+}
+
+/*
+URL replaces the named matches in the Pattern with the values
+provided and returns a URL with the resulting Path. It can be used to
+generate a URL that would match the given pattern with the provided
+variables. You must provide a mapping for all named matches defined in
+the Pattern.
+*/
+func (p *Pattern) URL(vars map[pattern.Variable]string) (url.URL, error) {
+	var missing []string
+	var buf bytes.Buffer
+
+	matches := patternRe.FindAllStringSubmatchIndex(p.raw, -1)
+
+	n := 0
+	for _, match := range matches {
+		a, b := match[2], match[3]
+
+		name := pattern.Variable(p.raw[a:b])
+		value, ok := vars[name]
+		if !ok {
+			missing = append(missing, string(name))
+		}
+
+		buf.WriteString(p.raw[n : a-1]) // Need to leave off the colon
+		buf.WriteString(value)
+
+		n = b
+	}
+	buf.WriteString(p.raw[n:])
+
+	if missing != nil {
+		return url.URL{}, fmt.Errorf("missing path variables for replacement: %s", strings.Join(missing, ", "))
+	}
+
+	return url.URL{Path: buf.String()}, nil
 }
 
 /*
