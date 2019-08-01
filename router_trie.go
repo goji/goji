@@ -70,8 +70,8 @@ func (rt *router) route(r *http.Request) *http.Request {
 	}
 
 	ctx := r.Context()
-	path := ctx.Value(internal.Path).(string)
-	for path != "" {
+	path, ok := ctx.Value(internal.Path).(string)
+	for ok && path != "" {
 		i := sort.Search(len(tn.children), func(i int) bool {
 			return path[0] <= tn.children[i].prefix[0]
 		})
