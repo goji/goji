@@ -33,7 +33,10 @@ func (m match) Value(key interface{}) interface{} {
 		return vs
 	case internal.Path:
 		if len(m.matches) == len(m.pat.pats)+1 {
-			return m.matches[len(m.matches)-1]
+			// matches are immutable once made, so return a pointer to
+			// the path string to avoid a hot-path allocation (passing
+			// string into an interface{} allocates 24-bytes on the heap)q
+			return &m.matches[len(m.matches)-1]
 		}
 		return ""
 	}
