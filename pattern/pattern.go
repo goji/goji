@@ -54,7 +54,18 @@ func Path(ctx context.Context) string {
 	if pi == nil {
 		return ""
 	}
-	return pi.(string)
+
+	switch p := pi.(type) {
+	case *string:
+		// pat.match.Value may return a pointer to a string to avoid a hot-path
+		// allocation (passing string into an interface{} allocates 24-bytes on
+		// the heap)
+		return *p
+	case string:
+		return p
+	}
+
+	return ""
 }
 
 /*
